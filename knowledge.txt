@@ -1,0 +1,73 @@
+     docker ps 
+	-s -> exibir volume
+	-a -> exibir historico de containers
+
+rodar modo interativo ubuntu 
+docker run -it ubuntu bash
+
+parar todos os containers 
+docker stop $(docker container ls -q)
+
+remover todos os containers 
+docker container rm $(docker container ls -aq)
+
+Remover todos os containers por image name
+docker container rm $(docker container ls -a --filter ancestor=ubuntu -q)
+
+remover todas as imagens
+docker rmi $(docker image ls -aq)
+
+
+############## Deployment
+
+Buildar uma nova versão do projeto 
+docker build -t davidcardoso/app-node:1.1 .
+
+rodar container com forward porta do container porta do serviço
+docker run -d -p 8080:80 nome-da-image/app:1.2
+
+
+criar uma nova imagem tar (recomenda-se para fazer um novo push)
+docker tag davidcardoso/app-node:1.0 davidlimacd/dockernode:1.0
+
+docker push 
+ docker push davidlimacd/dockernode:1.2
+
+############## PersistÊncia de dados
+
+Persistir diretorio utilizando -v caminho_a_ser_salvo:diretorio_container
+docker run -it -v D:\docker-volumes\:/app ubuntu bash
+
+Type binds volume mount
+docker run -it --mount type=bind,source=D:\docker-volumes\,target=/app ubuntu bash
+
+Montar volume
+docker volume create meu-volume
+
+criar um container com volume adicionado
+docker run -it -v meu-volume:/app ubuntu bash
+ou
+ docker run -it --mount source=meu-volume,target=/app ubuntu bash
+
+Montar tmpfs
+docker run -it --tmpfs/app ubuntu bash
+ou
+docker run -it --mount source=tmpfs,target=/app ubuntu bash
+
+############## Network
+
+ver todos os detalhes do container 
+docker inspect <image-id>
+
+listar interfaces de rede
+docker network ls
+
+criar uma rede bridge
+docker network create --driver bridge minha-bridge
+
+Rodar um container na rede criada
+docker run -it --name ubuntu1 --network minha-bridge ubuntu sleep 1d
+
+
+
+
